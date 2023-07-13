@@ -1,0 +1,9 @@
+version: '2'
+services:
+  tl:
+    image: ghcr.io/thelounge/thelounge:latest
+    ports:
+      - "9000:9000"
+    restart: always
+    volumes:
+      - ~/.thelounge:/var/opt/thelounge # bind lounge config from the host's file system
