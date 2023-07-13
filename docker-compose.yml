@@ -1,7 +1,8 @@
 version: '2'
 services:
-  tl:
-    image: ghcr.io/thelounge/thelounge:latest
+  thelounge:
+    image: thelounge
+    build: .
     ports:
       - "9000:9000"
     restart: always
