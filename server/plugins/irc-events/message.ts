@@ -1,4 +1,3 @@
-import * as cheerio from "cheerio";
 import Msg, {MessageType} from "../../models/msg";
 import LinkPrefetch from "./link";
 import RenderWikiPage from "./wikipage";
@@ -174,17 +173,10 @@ export default <IrcEventHandler>function (irc, network) {
 		if (data.type == MessageType.MESSAGE) {
 			const channel = chan;
 			RenderWikiPage(msg).then((html) => {
-				const $ = cheerio.load(html);
-				const output = $(".mw-parser-output") as any;
-				output
-					.contents()
-					.filter((_, e) => e.type === "comment")
-					.remove();
-				const text = output.html().trim();
 				const newMsg = new Msg({
 					type: msg.type,
 					time: msg.time,
-					text: text || "",
+					text: html || "",
 					self: msg.self,
 					from: msg.from,
 					highlight: msg.highlight,

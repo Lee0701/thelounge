@@ -1,10 +1,12 @@
 import got from "got";
+import * as cheerio from "cheerio";
+import sanitizeHtml from "sanitize-html";
 
 import Config from "../../config";
 import Msg from "../../models/msg";
 
 export default async function (msg: Msg) {
-	const text = msg.text;
+	const text = sanitizeHtml(msg.text);
 	const url = Config.values.wikichat.apiUrl;
 	const result = (await got
 		.post(url, {
@@ -17,5 +19,12 @@ export default async function (msg: Msg) {
 			},
 		})
 		.json()) as any;
-	return result.parse.text["*"];
+	const html = result.parse.text["*"];
+	const $ = cheerio.load(html);
+	const output = $(".mw-parser-output") as any;
+	output
+		.contents()
+		.filter((_, e) => e.type === "comment")
+		.remove();
+	return output.html().trim();
 }
