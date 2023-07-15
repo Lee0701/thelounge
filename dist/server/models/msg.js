@@ -40,6 +40,7 @@ class Msg {
     from;
     id;
     previews;
+    isHtml;
     text;
     type;
     self;
@@ -86,6 +87,7 @@ class Msg {
             from: {},
             id: 0,
             previews: [],
+            isHtml: false,
             text: "",
             type: MessageType.MESSAGE,
             self: false,

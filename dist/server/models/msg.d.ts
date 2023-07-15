@@ -37,6 +37,7 @@ declare class Msg {
     from: UserInMessage;
     id: number;
     previews: LinkPreview[];
+    isHtml: boolean;
     text: string;
     type: MessageType;
     self: boolean;

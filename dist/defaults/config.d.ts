@@ -71,3 +71,6 @@ export declare namespace debug {
     const ircFramework: boolean;
     const raw: boolean;
 }
+export declare namespace wikichat {
+    const apiUrl: string;
+}

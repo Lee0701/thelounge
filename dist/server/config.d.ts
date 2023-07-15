@@ -39,6 +39,9 @@ declare type Debug = {
     ircFramework: boolean;
     raw: boolean;
 };
+declare type Wikichat = {
+    apiUrl: string;
+};
 export declare type ConfigType = {
     public: boolean;
     host: string | undefined;
@@ -67,6 +70,7 @@ export declare type ConfigType = {
     ldap: Ldap;
     debug: Debug;
     themeColor: string;
+    wikichat: Wikichat;
 };
 declare class Config {
     #private;

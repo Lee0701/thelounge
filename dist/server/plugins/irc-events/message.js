@@ -28,6 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const msg_1 = __importStar(require("../../models/msg"));
 const link_1 = __importDefault(require("./link"));
+const wikipage_1 = __importDefault(require("./wikipage"));
 const irc_1 = require("../../../shared/irc");
 const helper_1 = __importDefault(require("../../helper"));
 const chan_1 = require("../../models/chan");
@@ -51,7 +52,7 @@ exports.default = (function (irc, network) {
         data.type = msg_1.MessageType.WALLOPS;
         handleMessage(data);
     });
-    function handleMessage(data) {
+    async function handleMessage(data) {
         let chan;
         let from;
         let highlight = false;
@@ -152,11 +153,28 @@ exports.default = (function (irc, network) {
                 msg.users.push(match[1]);
             }
         }
-        // No prefetch URLs unless are simple MESSAGE or ACTION types
-        if ([msg_1.MessageType.MESSAGE, msg_1.MessageType.ACTION].includes(data.type)) {
-            (0, link_1.default)(client, chan, msg, cleanMessage);
+        if (data.type == msg_1.MessageType.MESSAGE) {
+            const channel = chan;
+            const html = await (0, wikipage_1.default)(msg);
+            const newMsg = new msg_1.default({
+                type: msg.type,
+                time: msg.time,
+                isHtml: true,
+                text: html || "",
+                self: msg.self,
+                from: msg.from,
+                highlight: msg.highlight,
+                users: msg.users,
+            });
+            channel.pushMessage(client, newMsg, !msg.self);
         }
-        chan.pushMessage(client, msg, !msg.self);
+        else {
+            // No prefetch URLs unless are simple MESSAGE or ACTION types
+            if ([msg_1.MessageType.MESSAGE, msg_1.MessageType.ACTION].includes(data.type)) {
+                (0, link_1.default)(client, chan, msg, cleanMessage);
+            }
+            chan.pushMessage(client, msg, !msg.self);
+        }
         // Do not send notifications if the channel is muted or for messages older than 15 minutes (znc buffer for example)
         if (!chan.muted && msg.highlight && (!data.time || data.time > Date.now() - 900000)) {
             let title = chan.name;
