@@ -84,7 +84,8 @@
 					class="msg-statusmsg tooltipped tooltipped-e"
 					><span>{{ message.statusmsgGroup }}</span></span
 				>
-				<ParsedMessage :network="network" :message="message" />
+				<span v-if="message.isHtml" v-html="message.text"></span>
+				<ParsedMessage v-else :network="network" :message="message" />
 				<LinkPreview
 					v-for="preview in message.previews"
 					:key="preview.link"
@@ -128,35 +129,27 @@ export default defineComponent({
 	},
 	setup(props) {
 		const store = useStore();
-
 		const timeFormat = computed(() => {
 			let format: keyof typeof constants.timeFormats;
-
 			if (store.state.settings.use12hClock) {
 				format = store.state.settings.showSeconds ? "msg12hWithSeconds" : "msg12h";
 			} else {
 				format = store.state.settings.showSeconds ? "msgWithSeconds" : "msgDefault";
 			}
-
 			return constants.timeFormats[format];
 		});
-
 		const messageTime = computed(() => {
 			return dayjs(props.message.time).format(timeFormat.value);
 		});
-
 		const messageTimeLocale = computed(() => {
 			return localetime(props.message.time);
 		});
-
 		const messageComponent = computed(() => {
 			return "message-" + props.message.type;
 		});
-
 		const isAction = () => {
 			return typeof MessageTypes["message-" + props.message.type] !== "undefined";
 		};
-
 		return {
 			timeFormat,
 			messageTime,

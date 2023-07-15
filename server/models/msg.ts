@@ -41,6 +41,7 @@ class Msg {
 	from!: UserInMessage;
 	id!: number;
 	previews!: LinkPreview[];
+	isHtml!: boolean;
 	text!: string;
 	type!: MessageType;
 	self!: boolean;
@@ -91,6 +92,7 @@ class Msg {
 			from: {},
 			id: 0,
 			previews: [],
+			isHtml: false,
 			text: "",
 			type: MessageType.MESSAGE,
 			self: false,

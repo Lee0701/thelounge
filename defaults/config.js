@@ -492,4 +492,9 @@ module.exports = {
 		// server window, displayed on the client.
 		raw: false,
 	},
+
+	// ## WikiChat settings
+	wikichat: {
+		apiUrl: "",
+	},
 };
