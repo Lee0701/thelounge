@@ -176,6 +176,7 @@ export default <IrcEventHandler>function (irc, network) {
 			const newMsg = new Msg({
 				type: msg.type,
 				time: msg.time,
+				isHtml: true,
 				text: html || "",
 				self: msg.self,
 				from: msg.from,
