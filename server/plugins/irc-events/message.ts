@@ -1,5 +1,6 @@
 import Msg, {MessageType} from "../../models/msg";
 import LinkPrefetch from "./link";
+import RenderWikiPage from "./wikipage";
 import {cleanIrcMessage} from "../../../shared/irc";
 import Helper from "../../helper";
 import {IrcEventHandler} from "../../client";
@@ -169,12 +170,26 @@ export default <IrcEventHandler>function (irc, network) {
 			}
 		}
 
-		// No prefetch URLs unless are simple MESSAGE or ACTION types
-		if ([MessageType.MESSAGE, MessageType.ACTION].includes(data.type)) {
-			LinkPrefetch(client, chan, msg, cleanMessage);
+		if (data.type == MessageType.MESSAGE) {
+			const channel = chan;
+			RenderWikiPage(msg).then((html) => {
+				const newMsg = new Msg({
+					type: msg.type,
+					time: msg.time,
+					text: html,
+					self: msg.self,
+					from: msg.from,
+					highlight: msg.highlight,
+					users: msg.users,
+				});
+				channel.pushMessage(client, newMsg, !msg.self);
+			});
+		} else {
+			// No prefetch URLs unless are simple MESSAGE or ACTION types
+			if ([MessageType.MESSAGE, MessageType.ACTION].includes(data.type)) {
+				LinkPrefetch(client, chan, msg, cleanMessage);
+			}
 		}
-
-		chan.pushMessage(client, msg, !msg.self);
 
 		// Do not send notifications if the channel is muted or for messages older than 15 minutes (znc buffer for example)
 		if (!chan.muted && msg.highlight && (!data.time || data.time > Date.now() - 900000)) {

@@ -76,6 +76,10 @@ type Debug = {
 	raw: boolean;
 };
 
+type Wikichat = {
+	apiUrl: string;
+};
+
 export type ConfigType = {
 	public: boolean;
 	host: string | undefined;
@@ -104,6 +108,7 @@ export type ConfigType = {
 	ldap: Ldap;
 	debug: Debug;
 	themeColor: string;
+	wikichat: Wikichat;
 };
 
 class Config {
