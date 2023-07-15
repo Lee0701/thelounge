@@ -1,3 +1,4 @@
+import * as cheerio from "cheerio";
 import Msg, {MessageType} from "../../models/msg";
 import LinkPrefetch from "./link";
 import RenderWikiPage from "./wikipage";
@@ -173,10 +174,17 @@ export default <IrcEventHandler>function (irc, network) {
 		if (data.type == MessageType.MESSAGE) {
 			const channel = chan;
 			RenderWikiPage(msg).then((html) => {
+				const $ = cheerio.load(html);
+				const output = $(".mw-parser-output") as any;
+				output
+					.contents()
+					.filter((_, e) => e.type === "comment")
+					.remove();
+				const text = output.html().trim();
 				const newMsg = new Msg({
 					type: msg.type,
 					time: msg.time,
-					text: html,
+					text: text || "",
 					self: msg.self,
 					from: msg.from,
 					highlight: msg.highlight,
@@ -189,6 +197,7 @@ export default <IrcEventHandler>function (irc, network) {
 			if ([MessageType.MESSAGE, MessageType.ACTION].includes(data.type)) {
 				LinkPrefetch(client, chan, msg, cleanMessage);
 			}
+			chan.pushMessage(client, msg, !msg.self);
 		}
 
 		// Do not send notifications if the channel is muted or for messages older than 15 minutes (znc buffer for example)
