@@ -38,7 +38,7 @@ export default <IrcEventHandler>function (irc, network) {
 		handleMessage(data);
 	});
 
-	function handleMessage(data: {
+	async function handleMessage(data: {
 		nick: string;
 		hostname: string;
 		ident: string;
@@ -172,18 +172,17 @@ export default <IrcEventHandler>function (irc, network) {
 
 		if (data.type == MessageType.MESSAGE) {
 			const channel = chan;
-			RenderWikiPage(msg).then((html) => {
-				const newMsg = new Msg({
-					type: msg.type,
-					time: msg.time,
-					text: html || "",
-					self: msg.self,
-					from: msg.from,
-					highlight: msg.highlight,
-					users: msg.users,
-				});
-				channel.pushMessage(client, newMsg, !msg.self);
+			const html = await RenderWikiPage(msg);
+			const newMsg = new Msg({
+				type: msg.type,
+				time: msg.time,
+				text: html || "",
+				self: msg.self,
+				from: msg.from,
+				highlight: msg.highlight,
+				users: msg.users,
 			});
+			channel.pushMessage(client, newMsg, !msg.self);
 		} else {
 			// No prefetch URLs unless are simple MESSAGE or ACTION types
 			if ([MessageType.MESSAGE, MessageType.ACTION].includes(data.type)) {
