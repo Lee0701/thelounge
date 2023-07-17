@@ -26,5 +26,5 @@ export default async function (msg: Msg) {
 		.contents()
 		.filter((_, e) => e.type === "comment")
 		.remove();
-	return output.html().trim();
+	return output.html().trim().replace(/\n/g, "");
 }

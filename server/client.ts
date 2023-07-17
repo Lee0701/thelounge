@@ -50,6 +50,9 @@ const events = [
 	"whois",
 ];
 
+const escapeMessage = (str: string): string =>
+	str.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\\/g, "\\\\");
+
 type ClientPushSubscription = {
 	endpoint: string;
 	keys: {
@@ -439,10 +442,16 @@ class Client {
 
 	input(data) {
 		const client = this;
-		data.text.split("\n").forEach((line) => {
-			data.text = line;
-			client.inputLine(data);
-		});
+		// Removed for wikichat
+		// data.text.split("\n").forEach((line) => {
+		// 	data.text = line;
+		// 	client.inputLine(data);
+		// });
+
+		// Double-escape the text instead
+		data.text = escapeMessage(data.text);
+
+		client.inputLine(data);
 	}
 
 	inputLine(data) {

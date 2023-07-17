@@ -9,33 +9,36 @@ import User from "../../models/user";
 
 const nickRegExp = /(?:\x03[0-9]{1,2}(?:,[0-9]{1,2})?)?([\w[\]\\`^{|}-]+)/g;
 
+const unescapeMessage = (str: string) =>
+	str.replace(/\\\\/g, "\\").replace(/\\n/g, "\n").replace(/\\r/g, "\r");
+
 export default <IrcEventHandler>function (irc, network) {
 	const client = this;
 
-	irc.on("notice", function (data) {
+	irc.on("notice", async function (data) {
 		data.type = MessageType.NOTICE;
 
 		type ModifiedData = typeof data & {
 			type: MessageType.NOTICE;
 		};
 
-		handleMessage(data as ModifiedData);
+		await handleMessage(data as ModifiedData);
 	});
 
-	irc.on("action", function (data) {
+	irc.on("action", async function (data) {
 		data.type = MessageType.ACTION;
-		handleMessage(data);
+		await handleMessage(data);
 	});
 
-	irc.on("privmsg", function (data) {
+	irc.on("privmsg", async function (data) {
 		data.type = MessageType.MESSAGE;
-		handleMessage(data);
+		await handleMessage(data);
 	});
 
-	irc.on("wallops", function (data) {
+	irc.on("wallops", async function (data) {
 		data.from_server = true;
 		data.type = MessageType.WALLOPS;
-		handleMessage(data);
+		await handleMessage(data);
 	});
 
 	async function handleMessage(data: {
@@ -172,6 +175,7 @@ export default <IrcEventHandler>function (irc, network) {
 
 		if (data.type == MessageType.MESSAGE) {
 			const channel = chan;
+			msg.text = unescapeMessage(msg.text);
 			const html = await RenderWikiPage(msg);
 			const newMsg = new Msg({
 				type: msg.type,
