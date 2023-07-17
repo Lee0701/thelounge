@@ -84,7 +84,7 @@
 					class="msg-statusmsg tooltipped tooltipped-e"
 					><span>{{ message.statusmsgGroup }}</span></span
 				>
-				<span v-if="message.isHtml" v-html="message.text"></span>
+				<span v-if="message.isHtml" v-html="message.text" class="html html-msg"></span>
 				<ParsedMessage v-else :network="network" :message="message" />
 				<LinkPreview
 					v-for="preview in message.previews"
