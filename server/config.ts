@@ -78,6 +78,7 @@ type Debug = {
 
 type Wikichat = {
 	apiUrl: string;
+	baseUrl: string;
 };
 
 export type ConfigType = {

@@ -7,9 +7,10 @@ import Msg from "../../models/msg";
 
 export default async function (msg: Msg) {
 	const text = sanitizeHtml(msg.text);
-	const url = Config.values.wikichat.apiUrl;
+	const apiUrl = Config.values.wikichat.apiUrl;
+	const baseUrl = Config.values.wikichat.baseUrl;
 	const result = (await got
-		.post(url, {
+		.post(apiUrl, {
 			form: {
 				action: "parse",
 				format: "json",
@@ -21,6 +22,7 @@ export default async function (msg: Msg) {
 		.json()) as any;
 	const html = result.parse.text["*"];
 	const $ = cheerio.load(html);
+	$("a:not(.external)").attr("href", (_, href) => baseUrl + href);
 	const output = $(".mw-parser-output") as any;
 	output
 		.contents()
