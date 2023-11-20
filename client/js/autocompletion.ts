@@ -30,6 +30,54 @@ const emojiStrategy: StrategyProps = {
 	index: 2,
 };
 
+const idsList = {
+	"⿰": "左右",
+	"⿱": "上下",
+	"⿲": "左中右",
+	"⿳": "上中下",
+	"⿴": "外內",
+	"⿵": "下方開口",
+	"⿶": "上方開口",
+	"⿷": "右方開口",
+	"⿸": "右下開口",
+	"⿹": "左下開口",
+	"⿺": "右上開口",
+	"⿻": "重疊",
+};
+
+const idcStrategy: StrategyProps = {
+	id: "idc",
+	match: /(idc)$/,
+	search(term: string, callback: (matches: string[][]) => void) {
+		callback(Object.keys(idsList).map((idc) => [idc, idc]));
+	},
+	template([string]: [string, string]) {
+		return `${string} <sub>IDC ${idsList[string]}</sub>`;
+	},
+	replace([, original]: [string, string]) {
+		return original;
+	},
+};
+
+const wikiFunctionsList = {
+	"{{#compose:": "函數型組字",
+	"{{#kage:": "臨時自動組字",
+};
+
+const wikiFunctionStrategy: StrategyProps = {
+	id: "wikiFunction",
+	match: /({{)$/,
+	search(term: string, callback: (matches: string[][]) => void) {
+		callback(Object.keys(wikiFunctionsList).map((func) => [func, func]));
+	},
+	template([string]: [string, string]) {
+		return `${string} <sub>${wikiFunctionsList[string]}</sub>`;
+	},
+	replace([, original]: [string, string]) {
+		return original;
+	},
+};
+
 const nicksStrategy: StrategyProps = {
 	id: "nicks",
 	match: /(^|\s)(@([a-zA-Z_[\]\\^{}|`@][a-zA-Z0-9_[\]\\^{}|`-]*)?)$/,
@@ -63,7 +111,7 @@ const chanStrategy: StrategyProps = {
 		return string;
 	},
 	replace([, original]: [string, string]) {
-		return "$1" + original;
+		return original;
 	},
 	index: 2,
 };
@@ -220,6 +268,8 @@ function enableAutocomplete(input: HTMLTextAreaElement) {
 
 	const strategies = [
 		emojiStrategy,
+		idcStrategy,
+		wikiFunctionStrategy,
 		nicksStrategy,
 		chanStrategy,
 		commandStrategy,
