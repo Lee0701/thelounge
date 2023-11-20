@@ -60,8 +60,8 @@ const idcStrategy: StrategyProps = {
 };
 
 const wikiFunctionsList = {
-	"{{#compose:": "函數型組字",
-	"{{#kage:": "臨時自動組字",
+	"{{#compose:": "臨時自動組字",
+	"{{#kage:": "精密組字",
 };
 
 const wikiFunctionStrategy: StrategyProps = {
