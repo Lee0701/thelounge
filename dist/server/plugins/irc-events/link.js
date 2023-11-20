@@ -361,6 +361,7 @@ function fetch(uri, headers) {
                 retry: 0,
                 timeout: prefetchTimeout || 5000,
                 headers: getRequestHeaders(headers),
+                localAddress: config_1.default.values.bind,
             });
             gotStream
                 .on("response", function (res) {

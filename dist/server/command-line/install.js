@@ -82,7 +82,9 @@ program
             process.exit(1);
         }
         if (json.thelounge.supports &&
-            !semver_1.default.satisfies(helper_1.default.getVersionNumber(), json.thelounge.supports)) {
+            !semver_1.default.satisfies(helper_1.default.getVersionNumber(), json.thelounge.supports, {
+                includePrerelease: true,
+            })) {
             log_1.default.error(`${chalk_1.default.red(humanVersion)} does not support The Lounge v${helper_1.default.getVersionNumber()}. Supported version(s): ${json.thelounge.supports}`);
             process.exit(2);
         }

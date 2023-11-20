@@ -1,4 +1,4 @@
-import Client from "./client";
+import Client, { UserConfig } from "./client";
 import WebPush from "./plugins/webpush";
 import { Server } from "socket.io";
 declare class ClientManager {
@@ -20,6 +20,6 @@ declare class ClientManager {
     };
     saveUser(client: Client, callback?: (err?: any) => void): true | void;
     removeUser(name: any): boolean;
-    private readUserConfig;
+    readUserConfig(name: string): false | UserConfig;
 }
 export default ClientManager;

@@ -45,6 +45,8 @@ const input = function ({ irc }, chan, cmd, args) {
             }
             text = text || args.join(" ");
             irc.action(chan.name, text);
+            // If the IRCd does not support echo-message, simulate the message
+            // being sent back to us.
             if (!irc.network.cap.isEnabled("echo-message")) {
                 irc.emit("action", {
                     nick: irc.user.nick,

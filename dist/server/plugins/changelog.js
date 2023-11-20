@@ -7,6 +7,7 @@ const got_1 = __importDefault(require("got"));
 const chalk_1 = __importDefault(require("chalk"));
 const log_1 = __importDefault(require("../log"));
 const package_json_1 = __importDefault(require("../../package.json"));
+const config_1 = __importDefault(require("../config"));
 const TIME_TO_LIVE = 15 * 60 * 1000; // 15 minutes, in milliseconds
 exports.default = {
     isUpdateAvailable: false,
@@ -34,6 +35,7 @@ async function fetch() {
                 Accept: "application/vnd.github.v3.html",
                 "User-Agent": package_json_1.default.name + "; +" + package_json_1.default.repository.url, // Identify the client
             },
+            localAddress: config_1.default.values.bind,
         });
         if (response.statusCode !== 200) {
             return versions;

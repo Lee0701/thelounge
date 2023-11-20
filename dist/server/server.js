@@ -774,24 +774,33 @@ function performAuthentication(data) {
     });
 }
 function reverseDnsLookup(ip, callback) {
-    dns_1.default.reverse(ip, (reverseErr, hostnames) => {
-        if (reverseErr || hostnames.length < 1) {
-            return callback(ip);
-        }
-        dns_1.default.resolve(hostnames[0], net_1.default.isIP(ip) === 6 ? "AAAA" : "A", (resolveErr, resolvedIps) => {
-            // TODO: investigate SoaRecord class
-            if (!Array.isArray(resolvedIps)) {
+    // node can throw, even if we provide valid input based on the DNS server
+    // returning SERVFAIL it seems: https://github.com/thelounge/thelounge/issues/4768
+    // so we manually resolve with the ip as a fallback in case something fails
+    try {
+        dns_1.default.reverse(ip, (reverseErr, hostnames) => {
+            if (reverseErr || hostnames.length < 1) {
                 return callback(ip);
             }
-            if (resolveErr || resolvedIps.length < 1) {
-                return callback(ip);
-            }
-            for (const resolvedIp of resolvedIps) {
-                if (ip === resolvedIp) {
-                    return callback(hostnames[0]);
+            dns_1.default.resolve(hostnames[0], net_1.default.isIP(ip) === 6 ? "AAAA" : "A", (resolveErr, resolvedIps) => {
+                // TODO: investigate SoaRecord class
+                if (!Array.isArray(resolvedIps)) {
+                    return callback(ip);
                 }
-            }
-            return callback(ip);
+                if (resolveErr || resolvedIps.length < 1) {
+                    return callback(ip);
+                }
+                for (const resolvedIp of resolvedIps) {
+                    if (ip === resolvedIp) {
+                        return callback(hostnames[0]);
+                    }
+                }
+                return callback(ip);
+            });
         });
-    });
+    }
+    catch (err) {
+        log_1.default.error(`failed to resolve rDNS for ${ip}, using ip instead`, err.toString());
+        setImmediate(callback, ip); // makes sure we always behave asynchronously
+    }
 }

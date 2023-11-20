@@ -52,9 +52,7 @@ const input = function (network, chan, cmd, args) {
     // Otherwise send part to the server and wait for response
     if (target.type !== chan_1.ChanType.CHANNEL ||
         target.state === chan_1.ChanState.PARTED ||
-        !network.irc ||
-        !network.irc.connection ||
-        !network.irc.connection.connected) {
+        !network.irc.connected) {
         this.part(network, target);
     }
     else {

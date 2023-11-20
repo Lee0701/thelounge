@@ -34,7 +34,7 @@ const input = function (network, chan, cmd, args) {
         if (!irc) {
             return;
         }
-        if (irc.connection && irc.connection.connected) {
+        if (irc.connected) {
             chan.pushMessage(this, new msg_1.default({
                 type: msg_1.MessageType.ERROR,
                 text: "You are already connected.",
